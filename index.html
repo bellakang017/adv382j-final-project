@@ -1,0 +1,1611 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Four Choices. One Way Out.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+:root{
+  --bg:       #E8DEC4;
+  --bg-2:     #DDD2B5;
+  --card:     #F0E7CE;
+  --ink:      #141210;
+  --ink-2:    #2A2620;
+  --muted:    #6F6450;
+  --rule:     rgba(20,18,16,0.16);
+  --rule-2:   rgba(20,18,16,0.32);
+  --accent:   #6E2438;          /* per-scene override */
+  --accent-soft: rgba(110,36,56,0.08);
+  --serif:    'Cormorant Garamond', Georgia, serif;
+  --sans:     'IBM Plex Sans', -apple-system, sans-serif;
+  --mono:     'IBM Plex Mono', ui-monospace, monospace;
+}
+
+html{scroll-behavior:smooth}
+
+body{
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 15px;
+  line-height: 1.55;
+  min-height:100vh;
+  position:relative;
+  overflow-x:hidden;
+}
+
+/* paper grain — fibrous warmth */
+body::before{
+  content:'';
+  position:fixed; inset:0;
+  background-image:
+    radial-gradient(ellipse 80% 60% at 50% 0%, rgba(140,105,20,0.05), transparent 60%),
+    radial-gradient(ellipse 80% 60% at 50% 100%, rgba(122,31,26,0.06), transparent 60%);
+  pointer-events:none;
+  z-index:1;
+}
+body::after{
+  content:'';
+  position:fixed; inset:0;
+  background-image:
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.78' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.08, 0 0 0 0 0.07, 0 0 0 0 0.05, 0 0 0 0.18 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  opacity:.65;
+  pointer-events:none;
+  mix-blend-mode:multiply;
+  z-index:2;
+}
+
+.shell{
+  position:relative;
+  z-index:3;
+  width:100%;
+  max-width:620px;
+  margin:0 auto;
+  padding: 1.25rem 1.25rem 4rem;
+}
+
+.screen{display:none;}
+.screen.active{display:block;animation: pageIn .6s cubic-bezier(.22,1,.36,1) both;}
+@keyframes pageIn{
+  from{opacity:0;transform:translateX(28px);}
+  to{opacity:1;transform:translateX(0);}
+}
+@keyframes ken{
+  from{transform:scale(1.02);}
+  to{transform:scale(1.10);}
+}
+
+/* ───── HP BAR (game-feel progress) ───── */
+.hp-bar{
+  position: relative;
+  height: 5px;
+  background: rgba(20,18,16,0.10);
+  margin: -.5rem -1.25rem .9rem;
+  overflow: hidden;
+}
+.hp-fill{
+  height: 100%;
+  background: var(--accent);
+  transition: width .9s cubic-bezier(.22,1,.36,1);
+  position: relative;
+}
+.hp-fill::after{
+  content:'';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent 60%, rgba(255,255,255,.4) 75%, transparent 90%);
+  animation: hpShine 2.4s ease-in-out infinite;
+}
+@keyframes hpShine{
+  0%, 100% {transform: translateX(-100%);}
+  50%      {transform: translateX(100%);}
+}
+
+/* ───── TOP BAR ───── */
+.topbar{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding: .35rem 0 .9rem;
+  margin-bottom: 1rem;
+  border-bottom:1px solid var(--ink);
+  min-height: 36px;
+}
+
+.back-btn{
+  font-family:var(--mono);
+  font-size:11px;
+  letter-spacing:.04em;
+  background:transparent;
+  border:none;
+  color:var(--ink);
+  cursor:pointer;
+  padding:6px 0;
+  display:inline-flex;
+  align-items:center;
+  gap:7px;
+  transition: color .2s, transform .15s;
+}
+.back-btn:hover{color:var(--accent);transform:translateX(-3px);}
+.back-btn[hidden]{display:none;}
+
+.tracker{
+  font-family:var(--mono);
+  font-size:11px;
+  letter-spacing:.06em;
+  color:var(--ink);
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+}
+.tracker .num{font-weight:500;}
+.tracker .total{color:var(--muted);}
+.tracker .sep{color:var(--muted);}
+
+/* ───── INTRO ───── */
+.intro-plate{
+  position:relative;
+  width: calc(100% + 2.5rem);
+  margin: 0 -1.25rem 1.5rem;
+  aspect-ratio: 5/4;
+  overflow:hidden;
+  background:#0F0A05;
+  border-bottom:1px solid var(--ink);
+}
+.intro-plate img{
+  position:absolute; inset:0;
+  width:100%; height:100%;
+  object-fit:cover;
+  filter: contrast(1.05) saturate(.85) brightness(.78);
+  animation: ken 22s ease-out both;
+}
+.intro-plate::after{
+  content:'';
+  position:absolute; inset:0;
+  background:
+    linear-gradient(180deg, rgba(15,10,5,.2) 0%, rgba(15,10,5,0) 30%, rgba(232,222,196,.85) 95%);
+}
+
+.intro-headline{
+  font-family:var(--serif);
+  font-weight:600;
+  font-size: clamp(2.6rem, 9vw, 4rem);
+  line-height: .95;
+  letter-spacing:-.02em;
+  color: var(--ink);
+  margin-bottom: 1rem;
+}
+.intro-headline .accent{color: var(--accent);}
+
+.intro-sub{
+  font-family:var(--sans);
+  font-size: 1.05rem;
+  line-height:1.55;
+  color: var(--ink-2);
+  max-width: 480px;
+  margin-bottom: 1.5rem;
+}
+
+/* ───── INTRO STATS (stat tiles) ───── */
+.intro-stats{
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin: 0 0 1.75rem;
+}
+.stat{
+  background: var(--card);
+  border: 1px solid var(--rule-2);
+  padding: 14px 8px 12px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  border-radius: 4px;
+}
+.stat-n{
+  font-family: var(--serif);
+  font-weight: 600;
+  font-size: 2rem;
+  line-height: 1;
+  color: var(--ink);
+}
+.stat-l{
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.intro-byline{
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-top: 1.5rem;
+  text-align: center;
+  padding-top: 1rem;
+  border-top: 1px solid var(--rule);
+}
+
+/* ───── MYTH PAGE (cinematic Odyssey reveal) ───── */
+.myth-plate{
+  position: relative;
+  margin: 0 -1.25rem 1.5rem;
+  aspect-ratio: 16/10;
+  overflow: hidden;
+  background: #0a0805;
+  border-bottom: 2px solid var(--ink);
+}
+.myth-plate img{
+  position: absolute;
+  inset: 0;
+  width: 100%; height: 100%;
+  object-fit: cover;
+  filter: contrast(1.05) saturate(.85) brightness(.55) sepia(.25);
+  animation: ken 24s ease-out both;
+  z-index: 0;
+}
+.myth-plate::after{
+  content:'';
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse at 50% 30%, transparent 30%, rgba(10,8,5,.55) 90%),
+    linear-gradient(180deg, rgba(10,8,5,.3) 0%, rgba(10,8,5,0) 25%, rgba(10,8,5,.85) 100%);
+  z-index: 2;
+}
+.myth-overlay{
+  position: absolute;
+  bottom: 22px;
+  left: 22px; right: 22px;
+  z-index: 3;
+}
+.myth-eyebrow{
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  color: rgba(245,235,210,.75);
+  margin-bottom: .65rem;
+}
+.myth-title{
+  font-family: var(--serif);
+  font-weight: 600;
+  font-size: clamp(3rem, 13vw, 5.2rem);
+  line-height: .9;
+  letter-spacing: -.02em;
+  color: #F5EBD0;
+  text-shadow: 0 2px 18px rgba(0,0,0,.5);
+}
+.myth-title em{font-style: italic; color: #C8915C;}
+
+.myth-body{margin-bottom: 1.75rem;}
+.myth-body p{
+  font-family: var(--sans);
+  font-size: 1rem;
+  line-height: 1.75;
+  color: var(--ink-2);
+  margin-bottom: 1.1rem;
+}
+.myth-body p.myth-lead{
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 1.3rem;
+  line-height: 1.45;
+  color: var(--ink);
+  margin-bottom: 1.3rem;
+}
+
+.myth-cast{
+  margin: 1.6rem 0 0;
+  padding: 1.2rem 1.3rem 1.3rem;
+  background: var(--card);
+  border: 1px solid var(--rule-2);
+  border-radius: 6px;
+  position: relative;
+}
+.myth-cast::before{
+  content:'';
+  position: absolute;
+  top: 0; left: 1.3rem;
+  width: 36px;
+  height: 2px;
+  background: var(--accent);
+  transform: translateY(-1px);
+}
+.myth-cast-label{
+  font-family: var(--mono) !important;
+  font-size: 10px !important;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: var(--muted) !important;
+  margin: 0 0 .9rem !important;
+  line-height: 1.45 !important;
+}
+.myth-cast ul{
+  list-style: none;
+  padding: 0;
+  margin: 0 0 .9rem;
+}
+.myth-cast li{
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: .45rem 0;
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 1.1rem;
+  color: var(--ink);
+  line-height: 1.35;
+  border-bottom: 1px solid var(--rule);
+}
+.myth-cast li:last-child{border-bottom: none;}
+.myth-cast li b{
+  display: inline-block;
+  width: 9px; height: 9px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.myth-cast-closer{
+  font-family: var(--serif) !important;
+  font-style: italic;
+  font-size: 1.1rem !important;
+  color: var(--accent) !important;
+  margin: .9rem 0 0 !important;
+  text-align: center;
+  padding-top: .7rem;
+  border-top: 1px solid var(--rule);
+}
+
+/* reveal-up animation for myth blocks */
+.reveal{
+  opacity: 0;
+  animation: revealUp .9s cubic-bezier(.22,1,.36,1) both;
+}
+@keyframes revealUp{
+  from {opacity: 0; transform: translateY(16px);}
+  to   {opacity: 1; transform: translateY(0);}
+}
+
+/* ───── BUTTONS (tactile, game-feel) ───── */
+.btn{
+  font-family:var(--sans);
+  font-weight:600;
+  font-size: .95rem;
+  letter-spacing: .03em;
+  text-transform: uppercase;
+  background: var(--ink);
+  color: var(--bg);
+  border: none;
+  border-radius: 6px;
+  padding: 14px 26px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  box-shadow: 0 4px 0 rgba(20,18,16,.28);
+  transition: background .18s, transform .1s, box-shadow .1s, gap .18s;
+  position: relative;
+}
+.btn:hover{
+  background: var(--accent);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 0 rgba(20,18,16,.38);
+  gap: 16px;
+}
+.btn:active{
+  transform: translateY(2px);
+  box-shadow: 0 2px 0 rgba(20,18,16,.28);
+}
+.btn svg{transition: transform .2s;}
+.btn:hover svg{transform: translateX(3px);}
+
+.btn-large{
+  font-size: 1.05rem;
+  padding: 18px 32px;
+  width: 100%;
+  justify-content: center;
+}
+
+.btn.pulse{animation: btnPulse 2.6s ease-in-out infinite;}
+.btn.pulse:hover{animation: none;}
+@keyframes btnPulse{
+  0%, 100% {box-shadow: 0 4px 0 rgba(20,18,16,.28), 0 0 0 0 var(--accent-soft);}
+  50%      {box-shadow: 0 4px 0 rgba(20,18,16,.28), 0 0 0 8px var(--accent-soft);}
+}
+
+.btn-ghost{
+  font-family:var(--mono);
+  font-size:11px;
+  letter-spacing:.06em;
+  background:transparent;
+  border:1px solid var(--rule-2);
+  padding:10px 16px;
+  color:var(--muted);
+  cursor:pointer;
+  transition: color .2s, border-color .2s, background .2s;
+}
+.btn-ghost:hover{color:var(--ink);border-color:var(--ink);background: var(--card);}
+
+/* ───── SCENE PLATE (cinematic, viewport-fit) ───── */
+.scene-plate{
+  position:relative;
+  margin: 0 -1.25rem 1rem;
+  aspect-ratio: 16/9;
+  max-height: 38vh;
+  min-height: 200px;
+  overflow:hidden;
+  background:#0F0A05;
+  border-top: 2px solid var(--ink);
+  border-bottom: 2px solid var(--ink);
+  box-shadow: inset 0 0 60px rgba(0,0,0,.4);
+}
+.scene-plate img{
+  position:absolute; inset:0;
+  width:100%; height:100%;
+  object-fit:cover;
+  filter: contrast(1.05) saturate(.9) brightness(.85);
+  animation: ken 16s ease-out both;
+}
+
+/* per-scene plate variants */
+.scene-plate.s-01 img{filter: contrast(1.08) saturate(.95) brightness(.82) hue-rotate(-5deg);}
+.scene-plate.s-02 img{filter: contrast(1.12) saturate(1.05) brightness(.78);}
+.scene-plate.s-03 img{filter: contrast(1.15) saturate(1) brightness(.7);}
+.scene-plate.s-04 img{filter: contrast(1.05) saturate(.9) brightness(.88);}
+
+.scene-plate::after{
+  content:'';
+  position:absolute; inset:0;
+  background: linear-gradient(180deg, rgba(15,10,5,.15) 0%, rgba(15,10,5,0) 35%, rgba(15,10,5,.55) 100%);
+  z-index: 2;
+}
+
+/* ───── WIND (slow shimmer over hero plates) ───── */
+.intro-plate, .scene-plate{position:relative;}
+.intro-plate img, .scene-plate img{z-index:0;}
+
+.intro-plate::before, .scene-plate::before{
+  content:'';
+  position:absolute;
+  inset:0;
+  z-index:1;
+  pointer-events:none;
+  background: linear-gradient(
+    100deg,
+    transparent 32%,
+    rgba(245,235,210,0.05) 46%,
+    rgba(245,235,210,0.14) 50%,
+    rgba(245,235,210,0.05) 54%,
+    transparent 68%
+  );
+  background-size: 320% 100%;
+  background-repeat: no-repeat;
+  mix-blend-mode: screen;
+  animation: wind 13s linear infinite;
+}
+
+@keyframes wind{
+  0%   {background-position: -50% 0; opacity: .35;}
+  50%  {opacity: .9;}
+  100% {background-position: 150% 0; opacity: .35;}
+}
+
+.scene-tag, .result-overlay{z-index: 3;}
+
+/* ───── SIRENS WHISPER (Scene 4 only) ───── */
+.whispers{
+  position: absolute;
+  top: 18px;
+  right: 16px;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: .5rem;
+  pointer-events: none;
+  max-width: 65%;
+}
+
+.whisper{
+  font-family: var(--serif);
+  font-style: italic;
+  font-weight: 500;
+  font-size: 1.1rem;
+  color: rgba(245,235,210,.92);
+  text-shadow:
+    0 0 10px rgba(122,31,26,.6),
+    0 1px 3px rgba(0,0,0,.6);
+  letter-spacing: .01em;
+  opacity: 0;
+  transform: translateX(10px);
+  animation: whisper 12s ease-in-out infinite;
+}
+
+@keyframes whisper{
+  0%, 100% {opacity: 0; transform: translateX(10px);}
+  18%      {opacity: .85; transform: translateX(0);}
+  30%      {opacity: .92;}
+  50%      {opacity: .65;}
+  70%      {opacity: 0;}
+}
+
+@media (max-width: 480px){
+  .whisper{font-size: .95rem;}
+  .whispers{top: 14px; right: 12px; max-width: 70%;}
+}
+
+.scene-tag{
+  position:absolute;
+  bottom:12px; left:14px; right:14px;
+  z-index:2;
+  display:flex;
+  align-items:flex-end;
+  justify-content:space-between;
+  gap:10px;
+}
+.scene-tag .title{
+  font-family:var(--serif);
+  font-style:italic;
+  font-weight:600;
+  font-size: 1.4rem;
+  color: #F5EBD0;
+  line-height:1;
+  letter-spacing:.005em;
+}
+.scene-tag .credit{
+  font-family:var(--mono);
+  font-size:9px;
+  letter-spacing:.08em;
+  color: rgba(245,235,208,.7);
+  text-align:right;
+  line-height:1.4;
+  max-width:55%;
+}
+
+/* ───── SCENE COPY ───── */
+.scene-setup{
+  font-family:var(--sans);
+  font-size: .95rem;
+  line-height: 1.55;
+  color: var(--ink-2);
+  margin: .8rem 0 1rem;
+}
+.scene-setup p + p{margin-top: .4rem;}
+.scene-setup .em{color: var(--accent); font-weight: 600;}
+
+.q-prompt{
+  font-family:var(--serif);
+  font-weight:600;
+  font-size: 1.45rem;
+  line-height: 1.12;
+  color: var(--ink);
+  margin: 1rem 0 .85rem;
+  padding-top: .95rem;
+  border-top: 1px solid var(--rule-2);
+  letter-spacing:-.005em;
+}
+.q-prompt em{font-style:italic; color: var(--accent);}
+
+.options{display:flex;flex-direction:column;gap:8px;margin-bottom:1.1rem;}
+
+.option{
+  background:
+    var(--card)
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='140' height='140'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.92' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.12, 0 0 0 0 0.10, 0 0 0 0 0.07, 0 0 0 0.10 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  background-blend-mode: multiply;
+  border: 2px solid var(--rule);
+  border-radius: 10px;
+  padding: 12px 14px 12px 11px;
+  cursor: pointer;
+  text-align: left;
+  width: 100%;
+  font-family: var(--sans);
+  font-size: .92rem;
+  line-height: 1.38;
+  color: var(--ink);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  box-shadow: 0 3px 0 rgba(20,18,16,.10);
+  transition: border-color .15s, background .15s, transform .12s, box-shadow .12s;
+  position: relative;
+}
+.option:hover{
+  border-color: var(--ink);
+  background: #F5ECD2;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 0 rgba(20,18,16,.18);
+}
+.option:active{
+  transform: translateY(1px);
+  box-shadow: 0 2px 0 rgba(20,18,16,.12);
+}
+.option.selected{
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  transform: translateY(-2px);
+  box-shadow: 0 5px 0 var(--accent);
+}
+
+.opt-badge{
+  flex-shrink: 0;
+  width: 30px;
+  height: 30px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg);
+  border: 1.5px solid var(--rule-2);
+  border-radius: 50%;
+  font-family: var(--sans);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--muted);
+  transition: all .15s;
+}
+.option:hover .opt-badge{
+  border-color: var(--ink);
+  color: var(--ink);
+}
+.option.selected .opt-badge{
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #F5EBD0;
+  transform: rotate(-6deg) scale(1.05);
+}
+
+.opt-text{flex: 1;}
+
+.opt-check{
+  width: 0;
+  height: 22px;
+  flex-shrink: 0;
+  color: var(--accent);
+  opacity: 0;
+  transform: scale(.4);
+  transition: all .18s;
+}
+.option.selected .opt-check{
+  width: 22px;
+  opacity: 1;
+  transform: scale(1);
+}
+
+.next-row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:1rem;
+  flex-wrap:wrap;
+}
+
+.next-hint{
+  font-family:var(--mono);
+  font-size:10px;
+  letter-spacing:.08em;
+  color: var(--muted);
+}
+
+.btn[disabled]{
+  background: var(--rule-2);
+  color: var(--bg);
+  cursor: not-allowed;
+  opacity: .55;
+  box-shadow: 0 2px 0 rgba(20,18,16,.12);
+  animation: none;
+}
+.btn[disabled]:hover{
+  background: var(--rule-2);
+  transform: none;
+  gap: 12px;
+  box-shadow: 0 2px 0 rgba(20,18,16,.12);
+}
+
+/* ───── RESULT ───── */
+.result-plate{
+  position:relative;
+  margin: 0 -1.25rem 1.25rem;
+  aspect-ratio: 4/5;
+  max-height: 70vh;
+  overflow:hidden;
+  background:#0F0A05;
+  border-top: 1px solid var(--ink);
+  border-bottom: 1px solid var(--ink);
+}
+.result-plate img{
+  position:absolute; inset:0;
+  width:100%; height:100%;
+  object-fit:cover;
+  filter: contrast(1.08) saturate(.92) brightness(.88);
+  animation: ken 18s ease-out both;
+}
+.result-plate::after{
+  content:'';
+  position:absolute; inset:0;
+  background: linear-gradient(180deg, rgba(15,10,5,0) 40%, rgba(15,10,5,.6) 100%);
+}
+
+.result-overlay{
+  position:absolute;
+  bottom: 14px; left:16px; right:16px;
+  z-index:2;
+  display:flex;
+  align-items:flex-end;
+  justify-content:space-between;
+  gap: 12px;
+}
+.verdict-stamp{
+  font-family:var(--mono);
+  font-size: 10px;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  color: #F5EBD0;
+  background: var(--accent);
+  padding: 5px 9px;
+  border: 1px solid rgba(245,235,208,.4);
+}
+.result-credit{
+  font-family:var(--mono);
+  font-size:9px;
+  color: rgba(245,235,208,.7);
+  letter-spacing:.06em;
+  text-align:right;
+  max-width:55%;
+}
+
+.result-name{
+  font-family: var(--serif);
+  font-weight: 600;
+  font-size: clamp(3.5rem, 14vw, 5.5rem);
+  line-height: .88;
+  letter-spacing: -.025em;
+  color: var(--ink);
+  margin-bottom: .35rem;
+}
+.result-name em{font-style:italic; color: var(--accent);}
+
+.result-fn{
+  font-family:var(--mono);
+  font-size: 11px;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 1.5rem;
+}
+
+.tie-note{
+  font-family: var(--sans);
+  font-size: .85rem;
+  font-style: italic;
+  line-height: 1.55;
+  color: var(--muted);
+  background: var(--accent-soft);
+  border-left: 2px solid var(--accent);
+  padding: .7rem .9rem .75rem;
+  margin: -.5rem 0 1.2rem;
+}
+
+.layer-frame{
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 1.05rem;
+  line-height: 1.55;
+  color: var(--ink-2);
+  margin: 0 0 1.25rem;
+  padding-left: .9rem;
+  border-left: 1px solid var(--rule-2);
+}
+
+.read-block{
+  border-top: 2px solid var(--ink);
+  border-bottom: 1px solid var(--rule);
+  padding: 1.2rem 0 1.3rem;
+  margin-bottom: 1.4rem;
+  position:relative;
+}
+.read-label{
+  font-family:var(--mono);
+  font-size: 10px;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: .5rem;
+}
+.read-text{
+  font-family: var(--serif);
+  font-style:italic;
+  font-weight: 600;
+  font-size: 1.4rem;
+  line-height: 1.3;
+  color: var(--ink);
+}
+
+.result-body{
+  font-family: var(--sans);
+  font-size: .95rem;
+  line-height: 1.65;
+  color: var(--ink-2);
+  margin-bottom: 1.5rem;
+}
+
+.cta-card{
+  background: var(--card);
+  border: 1px solid var(--ink);
+  padding: 1.2rem 1.3rem 1.3rem;
+  margin-bottom: 1.5rem;
+}
+
+.cta-label{
+  font-family:var(--mono);
+  font-size: 10px;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: .4rem;
+}
+
+.cta-text{
+  font-family: var(--serif);
+  font-weight: 600;
+  font-size: 1.35rem;
+  line-height: 1.15;
+  color: var(--ink);
+  margin-bottom: .35rem;
+}
+
+.cta-sub{
+  font-family: var(--sans);
+  font-size: .85rem;
+  color: var(--muted);
+  margin-bottom: 1rem;
+}
+
+.btn-book{
+  font-family: var(--sans);
+  font-weight: 600;
+  font-size: .9rem;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  background: var(--accent);
+  color: #F5EBD0;
+  border: none;
+  padding: 12px 22px;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  transition: filter .2s, transform .15s, gap .2s;
+}
+.btn-book:hover{filter:brightness(.85);transform:translateY(-1px);gap:16px;}
+.btn-book svg{transition: transform .2s;}
+.btn-book:hover svg{transform: translateX(3px);}
+
+/* ───── MATCH BREAKDOWN ───── */
+.match-block{margin: 1.5rem 0;}
+
+.match-title{
+  font-family:var(--mono);
+  font-size: 10px;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: .85rem;
+  display:flex;
+  align-items:center;
+  gap: 10px;
+}
+.match-title::after{
+  content:'';
+  flex:1;
+  height: 1px;
+  background: var(--rule);
+}
+
+.match-row{
+  display:grid;
+  grid-template-columns: 110px 1fr 32px;
+  align-items:center;
+  gap: 14px;
+  margin-bottom: 9px;
+  padding: 4px 0;
+}
+.match-lbl{
+  font-family: var(--serif);
+  font-style:italic;
+  font-weight: 500;
+  font-size: 1.05rem;
+  color: var(--ink);
+}
+.match-track{
+  height: 4px;
+  background: rgba(20,18,16,0.12);
+  position: relative;
+  overflow: hidden;
+}
+.match-fill{
+  position:absolute; inset: 0 auto 0 0;
+  background: var(--muted);
+  width: 0;
+  transition: width .9s .15s cubic-bezier(.22,1,.36,1);
+}
+.match-fill.w{background: var(--accent);}
+.match-n{
+  font-family:var(--mono);
+  font-size: 11px;
+  color: var(--muted);
+  text-align:right;
+  letter-spacing:.04em;
+}
+
+/* ───── CHARACTER GALLERY (result-side reveal) ───── */
+.gallery-toggle{
+  font-family:var(--mono);
+  font-size:11px;
+  letter-spacing:.06em;
+  background:transparent;
+  border:none;
+  color:var(--ink);
+  cursor:pointer;
+  padding: 6px 0;
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  border-bottom: 1px solid var(--ink);
+  margin: 1rem 0 1rem;
+  transition: gap .2s;
+}
+.gallery-toggle:hover{gap:12px;}
+.gallery-toggle .chev{
+  display:inline-block;
+  transition: transform .25s;
+}
+.gallery-toggle.open .chev{transform: rotate(90deg);}
+
+.gallery{
+  display:none;
+  border-top: 1px solid var(--rule);
+  padding-top: 1rem;
+  margin-bottom: 1rem;
+}
+.gallery.open{display:block;}
+
+.gallery-row{
+  display:grid;
+  grid-template-columns: 80px 1fr;
+  gap: 14px;
+  padding: .9rem 0;
+  border-bottom: 1px solid var(--rule);
+  align-items: flex-start;
+}
+.gallery-row:last-child{border-bottom:none;}
+.gallery-thumb{
+  width:80px; height:100px;
+  background:#0F0A05;
+  overflow:hidden;
+  position:relative;
+}
+.gallery-thumb img{
+  width:100%; height:100%;
+  object-fit:cover;
+  filter: contrast(1.05) saturate(.9) brightness(.88);
+}
+.gallery-meta .name{
+  font-family: var(--serif);
+  font-style:italic;
+  font-weight:600;
+  font-size: 1.4rem;
+  line-height:1;
+  margin-bottom: .15rem;
+}
+.gallery-meta .fn{
+  font-family:var(--mono);
+  font-size:9px;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+  color: var(--muted);
+  margin-bottom: .45rem;
+}
+.gallery-meta .desc{
+  font-family:var(--sans);
+  font-size:.85rem;
+  line-height:1.5;
+  color: var(--ink-2);
+}
+
+.gallery-row[data-c="penelope"] .name{color:#3F4A28;}
+.gallery-row[data-c="tiresias"] .name{color:#243E55;}
+.gallery-row[data-c="calypso"] .name{color:#1F4A48;}
+.gallery-row[data-c="odysseus"] .name{color:#7A2B1F;}
+
+.actions-row{
+  display:flex;
+  gap: 10px;
+  flex-wrap:wrap;
+  margin-top: 1rem;
+}
+
+.colophon{
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: .04em;
+  color: var(--muted);
+  line-height: 1.65;
+  margin-top: 2rem;
+  padding-top: 1.1rem;
+  border-top: 1px solid var(--rule);
+}
+
+svg.arr{width:14px;height:14px;flex-shrink:0;}
+
+/* responsive */
+@media (max-width: 380px){
+  .match-row{grid-template-columns: 90px 1fr 30px;}
+  .scene-tag .credit, .result-credit{max-width: 50%; font-size:8px;}
+}
+@media (prefers-reduced-motion: reduce){
+  *{animation-duration:.01ms !important; transition-duration:.01ms !important;}
+  .whisper{opacity: .8 !important; transform: translateX(0) !important;}
+}
+</style>
+</head>
+<body>
+<div class="shell">
+
+<!-- ═══════════════ INTRO ═══════════════ -->
+<div class="screen active" id="s-intro">
+  <div class="topbar">
+    <span></span>
+    <span class="tracker"><span class="num">CAREER & LIFE DESIGN</span></span>
+  </div>
+
+  <div class="intro-plate">
+    <img src="turnerulyssespolyphemus.jpg" alt="Ulysses at sea">
+  </div>
+
+  <h1 class="intro-headline">
+    How do you move<br>
+    when there's no <span class="accent">map</span>?
+  </h1>
+
+  <p class="intro-sub">
+    Six scenes from the Odyssey. Pick what sounds most like you. Find which character moves the way you do.
+  </p>
+
+  <div class="intro-stats">
+    <div class="stat"><span class="stat-n">6</span><span class="stat-l">scenes</span></div>
+    <div class="stat"><span class="stat-n">4</span><span class="stat-l">minutes</span></div>
+    <div class="stat"><span class="stat-n">∞</span><span class="stat-l">right answers</span></div>
+  </div>
+
+  <button class="btn btn-large pulse" onclick="startQuiz()">
+    Start
+    <svg class="arr" viewBox="0 0 14 14" fill="none"><path d="M1 7h12M8 2l5 5-5 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </button>
+
+  <p class="intro-byline">Office of Career and Life Design · UT Austin</p>
+</div>
+
+<!-- ═══════════════ MYTH (Odyssey reveal) ═══════════════ -->
+<div class="screen" id="s-myth">
+  <div class="topbar">
+    <button class="back-btn" onclick="backToIntro()">
+      <svg class="arr" viewBox="0 0 14 14" fill="none"><path d="M13 7H1M6 12L1 7l5-5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Back
+    </button>
+    <span class="tracker"><span class="num">THE STORY</span></span>
+  </div>
+
+  <div class="myth-plate">
+    <img src="Procession-of-the-Trojan-Horse-canvas-Troy-1760.webp" alt="">
+    <div class="myth-overlay">
+      <p class="myth-eyebrow">The story this quiz is built on</p>
+      <h2 class="myth-title">The <em>Odyssey</em></h2>
+    </div>
+  </div>
+
+  <div class="myth-body">
+    <p class="myth-lead reveal" style="animation-delay:.15s">
+      Three thousand years ago, Homer told the story of a man named Odysseus. After ten years of war he tried to sail home, and instead spent another ten years lost.
+    </p>
+
+    <p class="reveal" style="animation-delay:.5s">
+      He had no map. He landed on islands that weren't on any chart, met a witch who turned his crew into pigs, a goddess who offered him forever if he would stop trying to leave, and a sea full of voices designed to pull him under. He kept going anyway.
+    </p>
+
+    <p class="reveal" style="animation-delay:.85s">
+      The framework called Life Design takes its name from his journey. Not because anyone here is fighting sea monsters, but because graduate school works the same way: you are moving toward something nobody has fully described to you, and you have to decide before the picture is complete.
+    </p>
+
+    <div class="myth-cast reveal" style="animation-delay:1.2s">
+      <p class="myth-cast-label">Four characters from his story show up in the six scenes ahead</p>
+      <ul>
+        <li><b style="background:#3F4A28;"></b><span>A wife who weaves and waits.</span></li>
+        <li><b style="background:#243E55;"></b><span>A blind prophet who sees what others can't yet.</span></li>
+        <li><b style="background:#1F4A48;"></b><span>A goddess on a hidden island.</span></li>
+        <li><b style="background:#7A2B1F;"></b><span>A hero who builds the cage before the temptation arrives.</span></li>
+      </ul>
+      <p class="myth-cast-closer">One of them is already how you think.</p>
+    </div>
+  </div>
+
+  <button class="btn btn-large reveal" style="animation-delay:1.65s" onclick="startScenes()">
+    Begin the six scenes
+    <svg class="arr" viewBox="0 0 14 14" fill="none"><path d="M1 7h12M8 2l5 5-5 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </button>
+</div>
+
+<!-- ═══════════════ QUESTION ═══════════════ -->
+<div class="screen" id="s-q"></div>
+
+<!-- ═══════════════ RESULT ═══════════════ -->
+<div class="screen" id="s-result"></div>
+
+</div>
+
+<script>
+const SCENES=[
+  {
+    id:"01",
+    title:"Calypso's Island",
+    img:"Odysseus_and_Calypso.jpg",
+    credit:"Böcklin, 1883",
+    accent:"#1F5A57",
+    soft:"rgba(31,90,87,0.10)",
+    setup:[
+      "Seven years on Calypso's island. The goddess offers you immortality if you stop trying to leave.",
+      "You sit on the shore and watch the sea. You want to go home, but you have no map and no boat."
+    ],
+    prompt:"What's holding you back from going?",
+    opts:[
+      {k:"01",text:"Nothing about who I am. I just need to know where I land if I leave.",type:"penelope"},
+      {k:"02",text:"I won't move until I can see every route in front of me.",type:"tiresias"},
+      {k:"03",text:"Leaving the island means being seen, and I'm not sure I'm ready for that.",type:"calypso"},
+      {k:"04",text:"Show me what the journey costs and what I get back. Then I'm gone tomorrow.",type:"odysseus"}
+    ]
+  },
+  {
+    id:"02",
+    title:"The Trojan Horse",
+    img:"Procession-of-the-Trojan-Horse-canvas-Troy-1760.webp",
+    credit:"Tiepolo, c.1760",
+    accent:"#5C3A14",
+    soft:"rgba(92,58,20,0.10)",
+    setup:[
+      "A massive wooden horse appeared at the city gates overnight, and everyone is gathering to pull it through the walls.",
+      "Something feels off to you, but the celebration is already in motion."
+    ],
+    prompt:"When the crowd is moving one way, what's your first reaction?",
+    opts:[
+      {k:"01",text:"I check whether moving with them costs me something I actually care about.",type:"penelope"},
+      {k:"02",text:"I want to know who built it and where it came from before I touch it.",type:"tiresias"},
+      {k:"03",text:"I don't want to be the one who looks like they're stopping the parade.",type:"calypso"},
+      {k:"04",text:"I look inside before I commit either way, and I act fast once I've seen.",type:"odysseus"}
+    ]
+  },
+  {
+    id:"03",
+    title:"Circe's Cup",
+    img:"Circe_Offering_the_Cup_to_Odysseus_(2457_x_4023px_ed.).jpg",
+    credit:"Waterhouse, 1891",
+    accent:"#6E2438",
+    soft:"rgba(110,36,56,0.08)",
+    setup:[
+      "Someone offers you a cup. It doesn't kill the people who drink it. It changes them.",
+      "An email lands in your inbox: free career advising for graduate students. One appointment, no commitment."
+    ],
+    prompt:"What's your first thought?",
+    opts:[
+      {k:"01",text:"I'd consider it if it were built for researchers and not for everyone in general.",type:"penelope"},
+      {k:"02",text:"I want to know what \"Life Design\" actually is before I commit anything.",type:"tiresias"},
+      {k:"03",text:"If I need career help, I worry about what that says about me.",type:"calypso"},
+      {k:"04",text:"Show me what I'd get out of one hour. Then I'll decide if it's worth the time.",type:"odysseus"}
+    ]
+  },
+  {
+    id:"04",
+    title:"The Sirens",
+    img:"Ulysses_And_The_Sirens_by_Léon_Belly.jpg",
+    credit:"Belly, 1867",
+    accent:"#7A1F1A",
+    soft:"rgba(122,31,26,0.08)",
+    whispers:[
+      "...come closer...",
+      "...just one song...",
+      "...we know what you want..."
+    ],
+    setup:[
+      "You want to hear the song. The song kills anyone who follows it.",
+      "So you order the crew to lash you to the mast and seal their own ears with wax. You build the cage before the temptation arrives."
+    ],
+    prompt:"When a decision pulls you two ways, what's your first move?",
+    opts:[
+      {k:"01",text:"I ask who I want to be on the other side of this, and let that decide.",type:"penelope"},
+      {k:"02",text:"I find someone who's faced this and copy what worked for them.",type:"tiresias"},
+      {k:"03",text:"I think about what each choice would signal to the people whose opinion matters to me.",type:"calypso"},
+      {k:"04",text:"I build a system or set of rules that takes willpower out of the equation.",type:"odysseus"}
+    ]
+  },
+  {
+    id:"05",
+    title:"Athena Appears",
+    img:"Athena_appearing_to_Odysseus_to_reveal_the_Island_of_Ithaca_by_Giuseppe_Bottani.jpg",
+    credit:"Bottani, c.1775",
+    accent:"#8C6914",
+    soft:"rgba(140,105,20,0.10)",
+    setup:[
+      "Twenty years later you wash up on a shore you don't recognize. It's home.",
+      "Athena appears beside you. She doesn't carry you anywhere. She points at the ground and tells you you're already there."
+    ],
+    prompt:"What kind of guide actually helps you right now?",
+    opts:[
+      {k:"01",text:"Someone who helps me see where my own strengths already point.",type:"penelope"},
+      {k:"02",text:"Someone who maps the ground I haven't walked yet.",type:"tiresias"},
+      {k:"03",text:"Someone who doesn't grade where I've been or how long it's taken.",type:"calypso"},
+      {k:"04",text:"Someone who hands me a concrete next step, not another conversation about meaning.",type:"odysseus"}
+    ]
+  },
+  {
+    id:"06",
+    title:"The Long Look",
+    img:"Ditlev_Blunck_-Ulysses.jpg",
+    credit:"Blunck, 19th c.",
+    accent:"#3F4A28",
+    soft:"rgba(63,74,40,0.10)",
+    setup:[
+      "You're standing on a shore that isn't where you started. Twenty years of detours and surprise help got you here.",
+      "Before you choose what comes next, you take a long look back."
+    ],
+    prompt:"What question do you ask yourself looking back?",
+    opts:[
+      {k:"01",text:"Did I stay true to what I came here to do?",type:"penelope"},
+      {k:"02",text:"What do I still not know about where I'm going?",type:"tiresias"},
+      {k:"03",text:"What did I lose along the way that I didn't want to admit?",type:"calypso"},
+      {k:"04",text:"What's the one move I'd make differently if I were doing it over?",type:"odysseus"}
+    ]
+  }
+];
+
+const RESULTS={
+  penelope:{
+    name:"Penelope",
+    fn:"Value-Expressive",
+    accent:"#3F4A28",
+    soft:"rgba(63,74,40,0.08)",
+    img:"Wilson-My-Recking-Penelope-from-the-Odyssey-new.webp",
+    credit:"Wilson, c.1768",
+    blurb:"She wove and unraveled for ten years. Not stuck — refusing to become someone she wasn't.",
+    read:"Your field comes first. That's not avoidance. That's the answer.",
+    body:"You're asking where your depth has the most leverage and how many directions it can travel. Life Design starts there. It doesn't ask you to separate your scholarly identity from your career. It treats that identity as the move.",
+    cta:"Career Design Conversation",
+    ctaSub:"One hour. Your field. Your goals."
+  },
+  tiresias:{
+    name:"Tiresias",
+    fn:"Knowledge",
+    accent:"#243E55",
+    soft:"rgba(36,62,85,0.08)",
+    img:"tiresias-odysseus-1a.jpg",
+    credit:"after Füssli",
+    blurb:"The blind prophet. Odysseus went to the underworld to ask him one thing: what's actually down the road.",
+    read:"You're not avoiding it. You just haven't been given a real map.",
+    body:"Life Design starts with the map. The first appointment isn't about deciding anything. It's about seeing the full terrain. What paths exist. What others in your field have done. What you didn't know to ask about.",
+    cta:"Overview Session",
+    ctaSub:"What's possible for researchers in your area."
+  },
+  calypso:{
+    name:"Calypso",
+    fn:"Ego-Defensive",
+    accent:"#1F4A48",
+    soft:"rgba(31,74,72,0.08)",
+    img:"Calypso_receiving_Telemachus_and_Mentor_in_the_Grotto_detail.webp",
+    credit:"c.1810",
+    blurb:"Her island is safe and outside the world's view. She offers Odysseus a seat for as long as he needs.",
+    read:"What feels like avoidance is the weight of everything you've built. We don't ask you to put any of it down.",
+    body:"You don't have to declare anything, give anything up, or imply your current path is wrong. The appointment is confidential and doesn't appear on your record. What you bring stays between you and your Educator.",
+    cta:"1:1 Conversation",
+    ctaSub:"No labels. No assumptions. No pressure."
+  },
+  odysseus:{
+    name:"Odysseus",
+    fn:"Utilitarian",
+    accent:"#7A2B1F",
+    soft:"rgba(122,43,31,0.08)",
+    img:"turnerulyssespolyphemus.jpg",
+    credit:"Turner, 1829",
+    blurb:"He didn't trust willpower. He tied himself to the mast before the song even started.",
+    read:"You want evidence before the time investment. Bring exactly that question.",
+    body:"Come with your constraints: timeline, competing priorities, what you've already ruled out. Leave with a concrete next step and a framework for the actual decision you're trying to make. One hour. Designed to ship something usable.",
+    cta:"Career Strategy Session",
+    ctaSub:"Bring the question. Leave with the plan."
+  }
+};
+
+const ORDER=["penelope","tiresias","calypso","odysseus"];
+
+let answers=[];      // stores selected type index in opts, per scene
+let cur=0;
+
+function startQuiz(){
+  // intro -> myth (story page)
+  answers=[];
+  cur=0;
+  hide('s-intro');hide('s-q');hide('s-result');
+  show('s-myth');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function startScenes(){
+  // myth -> scene 1 (or current scene if backed in)
+  hide('s-myth');
+  showQ(cur);
+}
+
+function backToIntro(){
+  hide('s-myth');
+  show('s-intro');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function back(){
+  if(cur===0){
+    hide('s-q');hide('s-result');
+    show('s-myth');
+    window.scrollTo({top:0,behavior:'smooth'});
+    return;
+  }
+  cur--;
+  showQ(cur);
+}
+
+function showQ(i){
+  const q=SCENES[i];
+  const el=document.getElementById('s-q');
+
+  // set scene accent
+  document.documentElement.style.setProperty('--accent', q.accent);
+  document.documentElement.style.setProperty('--accent-soft', q.soft);
+
+  const prevPick = answers[i] !== undefined ? answers[i] : null;
+
+  el.innerHTML=`
+    <div class="hp-bar">
+      <div class="hp-fill" style="width:${((i+1)/SCENES.length)*100}%"></div>
+    </div>
+
+    <div class="topbar">
+      <button class="back-btn" onclick="back()">
+        <svg class="arr" viewBox="0 0 14 14" fill="none"><path d="M13 7H1M6 12L1 7l5-5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        ${i===0 ? 'Back to story' : 'Previous'}
+      </button>
+      <span class="tracker">
+        <span class="num">${q.id}</span><span class="sep">/</span><span class="total">${String(SCENES.length).padStart(2,'0')}</span>
+      </span>
+    </div>
+
+    <div class="scene-plate s-${q.id}">
+      <img src="${encodeURI(q.img)}" alt="">
+      ${q.whispers ? `
+        <div class="whispers">
+          ${q.whispers.map((w,wi)=>`<span class="whisper" style="animation-delay:${wi*4}s">${w}</span>`).join('')}
+        </div>
+      ` : ''}
+      <div class="scene-tag">
+        <span class="title">${q.title}</span>
+        <span class="credit">${q.credit}</span>
+      </div>
+    </div>
+
+    <div class="scene-setup">
+      ${q.setup.map(p=>`<p>${p}</p>`).join('')}
+    </div>
+
+    <h2 class="q-prompt">${q.prompt}</h2>
+
+    <div class="options">
+      ${q.opts.map((o,n)=>`
+        <button class="option ${prevPick===n?'selected':''}" id="o${n}" onclick="pick(${n})">
+          <span class="opt-badge">${String.fromCharCode(65+n)}</span>
+          <span class="opt-text">${o.text}</span>
+          <svg class="opt-check" viewBox="0 0 14 14" fill="none"><path d="M3 7l3 3 5-7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+      `).join('')}
+    </div>
+
+    <button class="btn btn-large ${prevPick!==null?'pulse':''}" id="bnext" onclick="next()" ${prevPick===null?'disabled':''}>
+      ${i===SCENES.length-1?'See the result':'Continue'}
+      <svg class="arr" viewBox="0 0 14 14" fill="none"><path d="M1 7h12M8 2l5 5-5 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+  `;
+
+  hide('s-intro');hide('s-result');
+  show('s-q');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function pick(n){
+  document.querySelectorAll('.option').forEach(e=>e.classList.remove('selected'));
+  document.getElementById('o'+n).classList.add('selected');
+  answers[cur]=n;
+  const btn=document.getElementById('bnext');
+  btn.removeAttribute('disabled');
+  btn.classList.add('pulse');
+}
+
+function next(){
+  if(answers[cur]===undefined)return;
+  if(cur<SCENES.length-1){cur++;showQ(cur);}
+  else showResult();
+}
+
+function showResult(){
+  // tally
+  const counts={penelope:0,tiresias:0,calypso:0,odysseus:0};
+  answers.forEach((n,i)=>{
+    const t=SCENES[i].opts[n].type;
+    counts[t]++;
+  });
+
+  // determine winner with tiebreaker = last scene
+  const max = Math.max(...Object.values(counts));
+  const tiedTypes = ORDER.filter(t => counts[t] === max);
+  const lastType = SCENES[SCENES.length-1].opts[answers[SCENES.length-1]].type;
+  let winner;
+  if(tiedTypes.length === 1){
+    winner = tiedTypes[0];
+  } else if(tiedTypes.includes(lastType)){
+    winner = lastType;
+  } else {
+    winner = tiedTypes[0];
+  }
+
+  const tieNote = tiedTypes.length > 1
+    ? `Your answers split across ${tiedTypes.length === 2 ? 'two' : tiedTypes.length === 3 ? 'three' : 'all four'} patterns. The last scene weighed most, because that one tests how you actually decide in the moment.`
+    : null;
+
+  const r=RESULTS[winner];
+
+  document.documentElement.style.setProperty('--accent', r.accent);
+  document.documentElement.style.setProperty('--accent-soft', r.soft);
+
+  const total = SCENES.length;
+  const bars=ORDER.map(t=>`
+    <div class="match-row">
+      <span class="match-lbl">${RESULTS[t].name}</span>
+      <div class="match-track"><div class="match-fill ${t===winner?'w':''}" data-w="${counts[t]/total*100}"></div></div>
+      <span class="match-n">${counts[t]}/${total}</span>
+    </div>
+  `).join('');
+
+  const gallery=ORDER.map(t=>{
+    const c=RESULTS[t];
+    return `
+      <div class="gallery-row" data-c="${t}">
+        <div class="gallery-thumb"><img src="${encodeURI(c.img)}" alt="${c.name}"></div>
+        <div class="gallery-meta">
+          <div class="name">${c.name}</div>
+          <div class="fn">${c.fn} · ${c===r?'You':''}</div>
+          <div class="desc">${c.blurb}</div>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  document.getElementById('s-result').innerHTML=`
+    <div class="topbar">
+      <button class="back-btn" onclick="backToLastScene()">
+        <svg class="arr" viewBox="0 0 14 14" fill="none"><path d="M13 7H1M6 12L1 7l5-5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Change last answer
+      </button>
+      <span class="tracker"><span class="num">VERDICT</span></span>
+    </div>
+
+    <div class="result-plate">
+      <img src="${encodeURI(r.img)}" alt="${r.name}">
+      <div class="result-overlay">
+        <span class="verdict-stamp">You're the ${r.name}</span>
+        <span class="result-credit">${r.credit}</span>
+      </div>
+    </div>
+
+    <h2 class="result-name">You're<br><em>${r.name}</em>.</h2>
+    <div class="result-fn">${r.fn} Function</div>
+
+    ${tieNote ? `<p class="tie-note">${tieNote}</p>` : ''}
+
+    <div class="read-block">
+      <div class="read-label">The pattern</div>
+      <p class="read-text">${r.read}</p>
+    </div>
+
+    <p class="result-body">${r.body}</p>
+
+    <div class="cta-card">
+      <div class="cta-label">Next move</div>
+      <div class="cta-text">${r.cta}</div>
+      <div class="cta-sub">${r.ctaSub}</div>
+      <a class="btn-book" href="https://utexas.joinhandshake.com" target="_blank" rel="noopener">
+        Book the appointment
+        <svg class="arr" viewBox="0 0 14 14" fill="none"><path d="M1 7h12M8 2l5 5-5 5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+    </div>
+
+    <div class="match-block">
+      <div class="match-title">Match</div>
+      ${bars}
+    </div>
+
+    <button class="gallery-toggle" id="galTog" onclick="toggleGallery()">
+      <span class="chev">›</span>
+      <span class="lbl">See the other three</span>
+    </button>
+    <div class="gallery" id="gal">${gallery}</div>
+
+    <div class="actions-row">
+      <button class="btn-ghost" onclick="retake()">Take it again</button>
+    </div>
+
+    <p class="colophon">
+      Built on Functional Attitude Theory (Katz, 1960). Odyssey's Lab · Stan Richards School of Advertising and PR · ADV 382J · Spring 2026
+    </p>
+  `;
+
+  // animate bars after paint
+  requestAnimationFrame(()=>{
+    setTimeout(()=>{
+      document.querySelectorAll('.match-fill').forEach(b=>{
+        b.style.width = b.dataset.w + '%';
+      });
+    },80);
+  });
+
+  hide('s-q');show('s-result');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function backToLastScene(){
+  cur=SCENES.length-1;
+  showQ(cur);
+}
+
+function toggleGallery(){
+  document.getElementById('gal').classList.toggle('open');
+  document.getElementById('galTog').classList.toggle('open');
+}
+
+function retake(){
+  answers=[];cur=0;
+  hide('s-result');hide('s-myth');hide('s-q');
+  show('s-intro');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function show(id){document.getElementById(id).classList.add('active');}
+function hide(id){document.getElementById(id).classList.remove('active');}
+
+// ─── touch swipe (scenes only) ───
+let _tsX=0,_tsY=0,_teX=0,_teY=0;
+document.addEventListener('touchstart',e=>{
+  _tsX=e.touches[0].clientX;_tsY=e.touches[0].clientY;
+},{passive:true});
+document.addEventListener('touchend',e=>{
+  _teX=e.changedTouches[0].clientX;_teY=e.changedTouches[0].clientY;
+  const dx=_tsX-_teX, dy=_tsY-_teY;
+  if(Math.abs(dx)<55 || Math.abs(dy)>Math.abs(dx)) return;
+  if(!document.getElementById('s-q').classList.contains('active')) return;
+  // tapping inside an option shouldn't fire — touchend fires after click anyway
+  if(dx>0){ if(answers[cur]!==undefined) next(); }
+  else    { back(); }
+},{passive:true});
+</script>
+</body>
+</html>

@@ -1,0 +1,1284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Odyssey Type · UX Case Study · Bella Kang</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+:root{
+  --bg:       #E8DEC4;
+  --bg-2:     #DDD2B5;
+  --card:     #F0E7CE;
+  --vellum:   #F5EBD0;
+  --ink:      #141210;
+  --ink-2:    #2A2620;
+  --wine:     #6E2438;
+  --gold:     #8C6914;
+  --teal:     #1F5A57;
+  --olive:    #3F4A28;
+  --indigo:   #243E55;
+  --umber:    #5C3A14;
+  --muted:    #6F6450;
+  --rule:     rgba(20,18,16,0.16);
+  --rule-2:   rgba(20,18,16,0.32);
+  --serif:    'Cormorant Garamond', Georgia, serif;
+  --sans:     'IBM Plex Sans', -apple-system, sans-serif;
+  --mono:     'IBM Plex Mono', ui-monospace, monospace;
+}
+
+html{scroll-behavior:smooth}
+
+body{
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 15px;
+  line-height: 1.6;
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* paper grain */
+body::before{
+  content:'';
+  position: fixed; inset: 0;
+  background:
+    radial-gradient(ellipse 80% 60% at 50% 0%, rgba(140,105,20,0.05), transparent 60%),
+    radial-gradient(ellipse 80% 60% at 50% 100%, rgba(110,36,56,0.06), transparent 60%);
+  pointer-events: none;
+  z-index: 1;
+}
+body::after{
+  content:'';
+  position: fixed; inset: 0;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.78' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.08, 0 0 0 0 0.07, 0 0 0 0 0.05, 0 0 0 0.18 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  opacity: .55;
+  pointer-events: none;
+  mix-blend-mode: multiply;
+  z-index: 2;
+}
+
+.page{
+  position: relative;
+  z-index: 3;
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem 6rem;
+}
+
+/* ═══════════════ TOP STRIP ═══════════════ */
+.topstrip{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: .25rem 0 .75rem;
+  border-bottom: 1px solid var(--ink);
+  margin-bottom: 2.5rem;
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+}
+.topstrip .l{color: var(--ink);}
+.topstrip .r{color: var(--muted);}
+.topstrip a{color: var(--wine); text-decoration: none; border-bottom: 1px solid var(--wine);}
+
+/* ═══════════════ HERO ═══════════════ */
+.hero{
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+  margin-bottom: 4rem;
+}
+
+@media (min-width: 760px){
+  .hero{grid-template-columns: 1.6fr 1fr; gap: 3rem; align-items: end;}
+}
+
+.hero-eyebrow{
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  color: var(--wine);
+  margin-bottom: 1rem;
+}
+
+.hero-title{
+  font-family: var(--serif);
+  font-weight: 600;
+  font-size: clamp(3.5rem, 9vw, 6rem);
+  line-height: .9;
+  letter-spacing: -.03em;
+  margin-bottom: 1.25rem;
+}
+.hero-title em{font-style: italic; color: var(--wine);}
+
+.hero-tagline{
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 1.4rem;
+  line-height: 1.4;
+  color: var(--ink-2);
+  max-width: 540px;
+  margin-bottom: 1.5rem;
+}
+
+.hero-meta{
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: .85rem 1.5rem;
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: .04em;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--rule-2);
+}
+.hero-meta dt{
+  font-size: 9px;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 4px;
+}
+.hero-meta dd{color: var(--ink);}
+
+.hero-art{
+  position: relative;
+  aspect-ratio: 4/5;
+  overflow: hidden;
+  background: #0F0A05;
+  border: 2px solid var(--ink);
+  box-shadow: 0 18px 40px -18px rgba(20,12,6,.4);
+}
+.hero-art img{
+  width: 100%; height: 100%; object-fit: cover;
+  filter: contrast(1.05) saturate(.9) brightness(.85);
+  animation: ken 22s ease-out both;
+}
+@keyframes ken{
+  from{transform:scale(1.02);}
+  to{transform:scale(1.10);}
+}
+.hero-art::after{
+  content:''; position: absolute; inset: 0;
+  background: linear-gradient(180deg, transparent 50%, rgba(15,10,5,.55));
+  pointer-events: none;
+}
+.hero-art-tag{
+  position: absolute;
+  bottom: 14px; left: 14px;
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: .1em;
+  color: rgba(245,235,210,.85);
+  z-index: 2;
+}
+
+/* ═══════════════ SECTIONS ═══════════════ */
+.section{
+  margin-bottom: 5rem;
+  scroll-margin-top: 2rem;
+}
+
+.section-header{
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+  margin-bottom: 2rem;
+  padding-bottom: .75rem;
+  border-bottom: 2px solid var(--ink);
+}
+.section-num{
+  font-family: var(--mono);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: .14em;
+  color: var(--wine);
+}
+.section-title{
+  font-family: var(--serif);
+  font-weight: 600;
+  font-size: clamp(2rem, 4.5vw, 2.6rem);
+  line-height: 1;
+  letter-spacing: -.015em;
+  color: var(--ink);
+  flex: 1;
+}
+.section-title em{font-style: italic;}
+
+/* ═══════════════ CONTEXT ═══════════════ */
+.context-grid{
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+}
+@media (min-width: 760px){
+  .context-grid{grid-template-columns: 2fr 1fr;}
+}
+
+.lead{
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 1.55rem;
+  line-height: 1.4;
+  color: var(--ink);
+  margin-bottom: 1.5rem;
+  letter-spacing: -.005em;
+}
+.lead em{color: var(--wine);}
+
+.body-prose p{
+  font-size: 1rem;
+  line-height: 1.75;
+  color: var(--ink-2);
+  margin-bottom: 1rem;
+  max-width: 56ch;
+}
+
+.callouts{
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.callout{
+  background: var(--card);
+  border-left: 3px solid var(--wine);
+  padding: 1rem 1.1rem;
+}
+.callout-stat{
+  font-family: var(--serif);
+  font-weight: 600;
+  font-size: 2.4rem;
+  line-height: 1;
+  letter-spacing: -.02em;
+  color: var(--wine);
+  margin-bottom: .25rem;
+}
+.callout-label{
+  font-family: var(--sans);
+  font-size: .9rem;
+  line-height: 1.4;
+  color: var(--ink-2);
+}
+
+/* ═══════════════ FAT GRID ═══════════════ */
+.fat-grid{
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 14px;
+  margin-top: 1.5rem;
+}
+@media (min-width: 600px){
+  .fat-grid{grid-template-columns: 1fr 1fr;}
+}
+@media (min-width: 980px){
+  .fat-grid{grid-template-columns: repeat(4, 1fr);}
+}
+
+.fat-card{
+  background: var(--card);
+  border: 1px solid var(--rule-2);
+  padding: 1.2rem 1.2rem 1.3rem;
+  position: relative;
+  border-radius: 4px;
+}
+.fat-card::before{
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 38px; height: 3px;
+  background: var(--accent, var(--wine));
+}
+.fat-card[data-fn="value"]{--accent: var(--olive);}
+.fat-card[data-fn="knowledge"]{--accent: var(--indigo);}
+.fat-card[data-fn="defensive"]{--accent: var(--teal);}
+.fat-card[data-fn="utility"]{--accent: var(--wine);}
+
+.fat-fn{
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin: .6rem 0 .35rem;
+}
+.fat-name{
+  font-family: var(--serif);
+  font-style: italic;
+  font-weight: 600;
+  font-size: 1.55rem;
+  line-height: 1;
+  color: var(--ink);
+  margin-bottom: .55rem;
+}
+.fat-desc{
+  font-size: .88rem;
+  line-height: 1.5;
+  color: var(--ink-2);
+}
+
+/* ═══════════════ JOURNEY ═══════════════ */
+.journey{
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.journey::before{
+  content: '';
+  position: absolute;
+  top: 60px;
+  bottom: 60px;
+  left: 110px;
+  width: 2px;
+  background: repeating-linear-gradient(180deg, var(--rule-2) 0, var(--rule-2) 5px, transparent 5px, transparent 10px);
+  z-index: 0;
+}
+
+@media (max-width: 700px){
+  .journey::before{left: 35px;}
+}
+
+.j-node{
+  display: grid;
+  grid-template-columns: 95px 1fr;
+  gap: 28px;
+  position: relative;
+  z-index: 1;
+}
+
+@media (max-width: 700px){
+  .j-node{grid-template-columns: 65px 1fr; gap: 16px;}
+}
+
+.j-tag{
+  text-align: right;
+  padding-top: 18px;
+}
+.j-step{
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 4px;
+}
+.j-id{
+  font-family: var(--serif);
+  font-weight: 600;
+  font-size: 1.8rem;
+  line-height: 1;
+  color: var(--ink);
+}
+
+.j-card{
+  background: var(--card);
+  border: 1px solid var(--rule-2);
+  border-radius: 4px;
+  display: grid;
+  grid-template-columns: 130px 1fr;
+  gap: 0;
+  overflow: hidden;
+  position: relative;
+}
+.j-card::before{
+  content: '';
+  position: absolute;
+  left: -28px;
+  top: 28px;
+  width: 24px;
+  height: 2px;
+  background: var(--rule-2);
+}
+@media (max-width: 700px){
+  .j-card{grid-template-columns: 90px 1fr;}
+  .j-card::before{left: -16px; width: 12px;}
+}
+
+.j-thumb{
+  position: relative;
+  background: #0F0A05;
+  overflow: hidden;
+  min-height: 130px;
+}
+.j-thumb img{
+  width: 100%; height: 100%; object-fit: cover;
+  filter: contrast(1.05) saturate(.85) brightness(.85);
+}
+.j-thumb::after{
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(180deg, transparent 50%, rgba(15,10,5,.5));
+}
+
+.j-thumb.intro-bg{background: linear-gradient(135deg, var(--card) 0%, var(--bg-2) 100%);}
+.j-thumb.intro-bg::after{display:none;}
+.j-thumb.intro-bg::before{
+  content: 'INTRO';
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--serif);
+  font-style: italic;
+  font-weight: 600;
+  font-size: 1.5rem;
+  color: var(--ink);
+  letter-spacing: .02em;
+}
+
+.j-thumb.result-bg{background: linear-gradient(135deg, var(--vellum) 0%, var(--card) 100%);}
+.j-thumb.result-bg::after{display:none;}
+.j-thumb.result-bg::before{
+  content: 'YOU\'RE\AN ODYSSEUS';
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-family: var(--serif);
+  font-style: italic;
+  font-weight: 600;
+  font-size: 1.05rem;
+  color: var(--wine);
+  white-space: pre;
+  line-height: 1.15;
+  padding: 8px;
+}
+
+.j-body{
+  padding: 14px 16px 14px 18px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.j-name{
+  font-family: var(--serif);
+  font-weight: 600;
+  font-size: 1.3rem;
+  line-height: 1.05;
+  color: var(--ink);
+  margin-bottom: .15rem;
+}
+.j-name em{font-style: italic;}
+
+.j-meta{
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: .6rem;
+}
+
+.j-quote{
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 1rem;
+  line-height: 1.4;
+  color: var(--ink-2);
+  margin-bottom: .55rem;
+}
+
+.j-note{
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: .04em;
+  color: var(--wine);
+  line-height: 1.45;
+  padding-top: .55rem;
+  border-top: 1px dashed var(--rule);
+}
+.j-note b{
+  font-weight: 500;
+  color: var(--ink);
+  text-transform: uppercase;
+  letter-spacing: .12em;
+  font-size: 9px;
+  margin-right: 6px;
+}
+
+/* divider for journey "phase" */
+.j-phase{
+  display: grid;
+  grid-template-columns: 95px 1fr;
+  gap: 28px;
+  align-items: center;
+  margin: 8px 0;
+}
+@media (max-width: 700px){
+  .j-phase{grid-template-columns: 65px 1fr; gap: 16px;}
+}
+.j-phase-bar{
+  height: 1px;
+  background: var(--rule-2);
+  position: relative;
+}
+.j-phase-label{
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  color: var(--muted);
+  background: var(--bg);
+  display: inline-block;
+  padding: 0 12px 0 0;
+  position: absolute;
+  top: -7px;
+  left: 0;
+}
+
+/* ═══════════════ DECISIONS ═══════════════ */
+.decisions{
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+}
+@media (min-width: 760px){
+  .decisions{grid-template-columns: 1fr 1fr;}
+}
+
+.dec{
+  background: var(--card);
+  border: 1px solid var(--rule-2);
+  padding: 1.4rem 1.5rem 1.5rem;
+  position: relative;
+  border-radius: 4px;
+}
+.dec-num{
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: .16em;
+  color: var(--wine);
+  margin-bottom: .55rem;
+}
+.dec-title{
+  font-family: var(--serif);
+  font-weight: 600;
+  font-size: 1.4rem;
+  line-height: 1.2;
+  color: var(--ink);
+  margin-bottom: .85rem;
+  letter-spacing: -.005em;
+}
+.dec-title em{font-style: italic; color: var(--wine);}
+.dec-body{
+  font-size: .94rem;
+  line-height: 1.65;
+  color: var(--ink-2);
+}
+.dec-tag{
+  display: inline-block;
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--muted);
+  background: var(--bg-2);
+  padding: 3px 8px;
+  border-radius: 2px;
+  margin-top: .85rem;
+}
+
+/* ═══════════════ ATMOSPHERE ═══════════════ */
+.atmo{
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+  margin-bottom: 2rem;
+}
+@media (min-width: 760px){
+  .atmo{grid-template-columns: repeat(3, 1fr);}
+}
+
+.atmo-card{
+  background: var(--card);
+  border: 1px solid var(--rule-2);
+  padding: 1.3rem 1.3rem 1.4rem;
+  border-radius: 4px;
+}
+.atmo-icon{
+  font-family: var(--serif);
+  font-style: italic;
+  font-weight: 600;
+  font-size: 2rem;
+  line-height: 1;
+  color: var(--wine);
+  margin-bottom: .9rem;
+}
+.atmo-name{
+  font-family: var(--serif);
+  font-weight: 600;
+  font-size: 1.2rem;
+  line-height: 1.2;
+  color: var(--ink);
+  margin-bottom: .5rem;
+}
+.atmo-desc{
+  font-size: .9rem;
+  line-height: 1.55;
+  color: var(--ink-2);
+}
+
+/* paintings inventory */
+.paintings{
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-top: 1.5rem;
+}
+@media (min-width: 600px){
+  .paintings{grid-template-columns: repeat(6, 1fr);}
+}
+.painting-tile{
+  position: relative;
+  aspect-ratio: 3/4;
+  background: #0F0A05;
+  overflow: hidden;
+  border: 1px solid var(--rule-2);
+}
+.painting-tile img{
+  width: 100%; height: 100%; object-fit: cover;
+  filter: contrast(1.05) saturate(.85) brightness(.88);
+  transition: transform .6s, filter .4s;
+}
+.painting-tile:hover img{
+  transform: scale(1.08);
+  filter: contrast(1.1) saturate(1) brightness(1);
+}
+.painting-cap{
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  padding: 8px 8px 6px;
+  background: linear-gradient(transparent, rgba(15,10,5,.85));
+  font-family: var(--mono);
+  font-size: 8px;
+  letter-spacing: .08em;
+  color: rgba(245,235,210,.85);
+  line-height: 1.3;
+}
+
+/* ═══════════════ STACK ═══════════════ */
+.stack{
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+}
+@media (min-width: 760px){
+  .stack{grid-template-columns: 1fr 1fr; gap: 3rem;}
+}
+
+.stack-list{
+  list-style: none;
+  padding: 0;
+}
+.stack-list li{
+  display: grid;
+  grid-template-columns: 130px 1fr;
+  gap: 14px;
+  padding: .8rem 0;
+  border-bottom: 1px solid var(--rule);
+  align-items: baseline;
+}
+.stack-list li:last-child{border-bottom: none;}
+.stack-list .k{
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.stack-list .v{
+  font-family: var(--sans);
+  font-size: .95rem;
+  color: var(--ink);
+  line-height: 1.45;
+}
+.stack-list .v code{
+  font-family: var(--mono);
+  font-size: .85rem;
+  background: var(--bg-2);
+  padding: 1px 5px;
+  border-radius: 2px;
+}
+
+/* ═══════════════ CTA ═══════════════ */
+.cta-block{
+  background: var(--ink);
+  color: var(--vellum);
+  padding: 2rem 1.75rem 2.25rem;
+  margin: 4rem 0 3rem;
+  position: relative;
+  border-radius: 4px;
+  text-align: center;
+}
+.cta-block::before{
+  content: '';
+  position: absolute;
+  inset: 6px;
+  border: 1px solid rgba(245,235,208,.18);
+  pointer-events: none;
+  border-radius: 2px;
+}
+.cta-eyebrow{
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  color: rgba(245,235,208,.7);
+  margin-bottom: .7rem;
+}
+.cta-title{
+  font-family: var(--serif);
+  font-weight: 600;
+  font-size: clamp(1.7rem, 4vw, 2.3rem);
+  line-height: 1.15;
+  margin-bottom: 1.2rem;
+}
+.cta-title em{font-style: italic; color: #E0A064;}
+
+.cta-btn{
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  font-family: var(--sans);
+  font-weight: 600;
+  font-size: .95rem;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  text-decoration: none;
+  background: var(--vellum);
+  color: var(--ink);
+  padding: 14px 26px;
+  border-radius: 6px;
+  box-shadow: 0 4px 0 rgba(0,0,0,.35);
+  transition: transform .15s, box-shadow .15s, gap .2s;
+}
+.cta-btn:hover{transform: translateY(-2px); box-shadow: 0 6px 0 rgba(0,0,0,.45); gap: 16px;}
+.cta-btn svg{width: 14px; height: 14px;}
+
+/* ═══════════════ COLOPHON ═══════════════ */
+.colophon{
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: .04em;
+  color: var(--muted);
+  line-height: 1.7;
+  text-align: center;
+  padding-top: 2rem;
+  border-top: 1px solid var(--rule);
+}
+.colophon b{color: var(--ink); font-weight: 500;}
+
+</style>
+</head>
+<body>
+<div class="page">
+
+<!-- ═══════════════ TOP STRIP ═══════════════ -->
+<div class="topstrip">
+  <span class="l">UX Case Study · Bella Kang</span>
+  <span class="r">Spring 2026 · <a href="index.html">View live →</a></span>
+</div>
+
+<!-- ═══════════════ HERO ═══════════════ -->
+<header class="hero">
+  <div>
+    <p class="hero-eyebrow">A diagnostic web quiz · Office of Career and Life Design</p>
+    <h1 class="hero-title">The <em>Odyssey</em><br>Type</h1>
+    <p class="hero-tagline">
+      A four-minute instrument that sorts graduate students by how they decide, then routes each one to a function-matched career conversation they would not have booked otherwise.
+    </p>
+    <dl class="hero-meta">
+      <div><dt>Role</dt><dd>Strategy, copy, design, build</dd></div>
+      <div><dt>Team</dt><dd>Bella Kang, Haijing Liu, Shengying Su</dd></div>
+      <div><dt>Theory</dt><dd>Functional Attitude Theory (Katz, 1960)</dd></div>
+      <div><dt>Stack</dt><dd>HTML, CSS, vanilla JS · no framework</dd></div>
+    </dl>
+  </div>
+  <div class="hero-art">
+    <img src="turnerulyssespolyphemus.jpg" alt="">
+    <span class="hero-art-tag">Turner, Ulysses Deriding Polyphemus, 1829</span>
+  </div>
+</header>
+
+<!-- ═══════════════ 01 CONTEXT ═══════════════ -->
+<section class="section">
+  <div class="section-header">
+    <span class="section-num">01</span>
+    <h2 class="section-title">An <em>awareness</em> problem that wasn't really about awareness.</h2>
+  </div>
+
+  <div class="context-grid">
+    <div class="body-prose">
+      <p class="lead">
+        Graduate students at UT Austin <em>knew</em> the Office of Career and Life Design existed. They didn't engage.
+      </p>
+      <p>
+        Client research surfaced three patterns: engagement clusters around qualifying exams and defenses (the office worked as a fallback, not a draw), emails reached inboxes but didn't convert, and graduate identity sits outside the "career advising" frame.
+      </p>
+      <p>
+        A 12-institution competitive analysis confirmed the diagnosis. OCLD's Life Design framework is uncontested in the higher-ed career landscape, but its student-facing language doesn't surface the distinction at first contact. Students arrive with competitor-trained expectations of a transactional service and read OCLD that way by default.
+      </p>
+      <p>
+        The brief was simple. Build a creative activation that interrupts that miscategorization and routes the right student to the right kind of first appointment, with no additional staffing burden.
+      </p>
+    </div>
+
+    <aside class="callouts">
+      <div class="callout">
+        <div class="callout-stat">12</div>
+        <div class="callout-label">Peer institution career offices analyzed for positioning gaps</div>
+      </div>
+      <div class="callout">
+        <div class="callout-stat">0/12</div>
+        <div class="callout-label">Used a Life Design framework as primary positioning</div>
+      </div>
+      <div class="callout">
+        <div class="callout-stat">4</div>
+        <div class="callout-label">Independent psychological barriers to engagement</div>
+      </div>
+      <div class="callout">
+        <div class="callout-stat">~4 min</div>
+        <div class="callout-label">Maximum time tolerated for a self-initiated diagnostic</div>
+      </div>
+    </aside>
+  </div>
+</section>
+
+<!-- ═══════════════ 02 STRATEGY ═══════════════ -->
+<section class="section">
+  <div class="section-header">
+    <span class="section-num">02</span>
+    <h2 class="section-title">Four <em>functions</em>. Two layers.</h2>
+  </div>
+
+  <div class="body-prose">
+    <p>
+      Functional Attitude Theory (Katz, 1960) treats an attitude as four independent psychological functions. Each is a different barrier and needs a different message — generic outreach fails everyone at once.
+    </p>
+    <p>
+      But matched messaging only works if the audience has correctly categorized the attitude object. OCLD's positioning fails this precondition. Any matched message lands on the wrong frame. The campaign therefore operates in two layers: <em>recategorize first</em> (Life Design is a self-awareness framework, not a career service), then <em>match</em> (deliver function-specific persuasion).
+    </p>
+  </div>
+
+  <div class="fat-grid">
+    <div class="fat-card" data-fn="value">
+      <div class="fat-fn">Value-Expressive</div>
+      <h3 class="fat-name">Penelope</h3>
+      <p class="fat-desc">Loyal to who she is, no matter what suitor arrives at the door. Asks where her depth has the most leverage.</p>
+    </div>
+    <div class="fat-card" data-fn="knowledge">
+      <div class="fat-fn">Knowledge</div>
+      <h3 class="fat-name">Tiresias</h3>
+      <p class="fat-desc">The blind prophet who maps what others can't see yet. Won't move until the terrain is visible.</p>
+    </div>
+    <div class="fat-card" data-fn="defensive">
+      <div class="fat-fn">Ego-Defensive</div>
+      <h3 class="fat-name">Calypso</h3>
+      <p class="fat-desc">Her island is safe because nobody can find her. The hesitation isn't avoidance — it's protection.</p>
+    </div>
+    <div class="fat-card" data-fn="utility">
+      <div class="fat-fn">Utilitarian</div>
+      <h3 class="fat-name">Odysseus</h3>
+      <p class="fat-desc">Ties himself to the mast before the song begins. Designs the structure that survives his own desires.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ 03 USER JOURNEY ═══════════════ -->
+<section class="section">
+  <div class="section-header">
+    <span class="section-num">03</span>
+    <h2 class="section-title">The <em>journey</em>, screen by screen.</h2>
+  </div>
+
+  <p class="lead" style="margin-bottom:2rem;">
+    Three entry channels collapse into one URL. From there, nine screens guide the student from cold curiosity to a function-matched booking.
+  </p>
+
+  <div class="journey">
+
+    <!-- ENTRY PHASE -->
+    <div class="j-phase">
+      <span></span>
+      <div class="j-phase-bar"><span class="j-phase-label">Entry</span></div>
+    </div>
+
+    <article class="j-node">
+      <div class="j-tag">
+        <div class="j-step">Channel</div>
+        <div class="j-id">A</div>
+      </div>
+      <div class="j-card" style="grid-template-columns: 130px 1fr;">
+        <div class="j-thumb intro-bg" style="display:flex;align-items:center;justify-content:center;">
+          <span style="font-family:var(--mono);font-size:9px;letter-spacing:.18em;color:var(--ink);text-align:center;line-height:1.4;">QR<br>FOLDER<br>CANVAS<br>SOCIAL</span>
+        </div>
+        <div class="j-body">
+          <div class="j-name">Three doors, one URL</div>
+          <div class="j-meta">Cold entry · No login</div>
+          <p class="j-quote">"What is this, and why am I taking it?"</p>
+          <p class="j-note"><b>UX MOVE</b>The activation enters through media that already perform the recategorization: a faculty-distributed folder reads as academic recommendation, Canvas reads as coursework, social reads as peer interest.</p>
+        </div>
+      </div>
+    </article>
+
+    <!-- ORIENTATION PHASE -->
+    <div class="j-phase">
+      <span></span>
+      <div class="j-phase-bar"><span class="j-phase-label">Orientation</span></div>
+    </div>
+
+    <article class="j-node">
+      <div class="j-tag">
+        <div class="j-step">Screen 01</div>
+        <div class="j-id">i.</div>
+      </div>
+      <div class="j-card">
+        <div class="j-thumb">
+          <img src="turnerulyssespolyphemus.jpg" alt="">
+        </div>
+        <div class="j-body">
+          <div class="j-name">Intro</div>
+          <div class="j-meta">~10s · One question, one button</div>
+          <p class="j-quote">"How do you move when there's no map?"</p>
+          <p class="j-note"><b>UX MOVE</b>Strips the screen to a hook. Three stat tiles answer "how long?" in the same glance. No mention of "career service" — Layer 1 protected from sentence one.</p>
+        </div>
+      </div>
+    </article>
+
+    <article class="j-node">
+      <div class="j-tag">
+        <div class="j-step">Screen 02</div>
+        <div class="j-id">ii.</div>
+      </div>
+      <div class="j-card">
+        <div class="j-thumb">
+          <img src="Procession-of-the-Trojan-Horse-canvas-Troy-1760.webp" alt="">
+        </div>
+        <div class="j-body">
+          <div class="j-name">The Story</div>
+          <div class="j-meta">~30s · Cinematic reveal</div>
+          <p class="j-quote">"Three thousand years ago, Homer told the story of a man named Odysseus..."</p>
+          <p class="j-note"><b>UX MOVE</b>Bridges the audience that has never read the Odyssey. Each paragraph reveals on stagger, ending with four characters previewed by color dot only — names withheld until the result.</p>
+        </div>
+      </div>
+    </article>
+
+    <!-- DIAGNOSTIC PHASE -->
+    <div class="j-phase">
+      <span></span>
+      <div class="j-phase-bar"><span class="j-phase-label">Diagnostic · 6 scenes</span></div>
+    </div>
+
+    <article class="j-node">
+      <div class="j-tag">
+        <div class="j-step">Scene 01</div>
+        <div class="j-id">01</div>
+      </div>
+      <div class="j-card">
+        <div class="j-thumb">
+          <img src="Odysseus_and_Calypso.jpg" alt="">
+        </div>
+        <div class="j-body">
+          <div class="j-name"><em>Calypso's Island</em></div>
+          <div class="j-meta">Accent · sea teal</div>
+          <p class="j-quote">"What's holding you back from going?"</p>
+          <p class="j-note"><b>TESTS</b>Why students stay in the safe option. Differentiates identity-loyalty from terrain-mapping from being-seen from cost-calculation.</p>
+        </div>
+      </div>
+    </article>
+
+    <article class="j-node">
+      <div class="j-tag">
+        <div class="j-step">Scene 02</div>
+        <div class="j-id">02</div>
+      </div>
+      <div class="j-card">
+        <div class="j-thumb">
+          <img src="Procession-of-the-Trojan-Horse-canvas-Troy-1760.webp" alt="">
+        </div>
+        <div class="j-body">
+          <div class="j-name"><em>The Trojan Horse</em></div>
+          <div class="j-meta">Accent · umber</div>
+          <p class="j-quote">"When the crowd is moving one way, what's your first reaction?"</p>
+          <p class="j-note"><b>TESTS</b>Default response to peer momentum. Surfaces social comparison vs. inquiry vs. conformity vs. inspection.</p>
+        </div>
+      </div>
+    </article>
+
+    <article class="j-node">
+      <div class="j-tag">
+        <div class="j-step">Scene 03</div>
+        <div class="j-id">03</div>
+      </div>
+      <div class="j-card">
+        <div class="j-thumb">
+          <img src="Circe_Offering_the_Cup_to_Odysseus_(2457_x_4023px_ed.).jpg" alt="">
+        </div>
+        <div class="j-body">
+          <div class="j-name"><em>Circe's Cup</em></div>
+          <div class="j-meta">Accent · wine · OCLD-relevant</div>
+          <p class="j-quote">"An email arrives offering free career advising. What's your first thought?"</p>
+          <p class="j-note"><b>TESTS</b>The actual scenario the campaign is built for. Names the stimulus directly so the response is unmediated.</p>
+        </div>
+      </div>
+    </article>
+
+    <article class="j-node">
+      <div class="j-tag">
+        <div class="j-step">Scene 04</div>
+        <div class="j-id">04</div>
+      </div>
+      <div class="j-card">
+        <div class="j-thumb">
+          <img src="Ulysses_And_The_Sirens_by_L%C3%A9on_Belly.jpg" alt="">
+        </div>
+        <div class="j-body">
+          <div class="j-name"><em>The Sirens</em></div>
+          <div class="j-meta">Accent · blood · Whisper layer</div>
+          <p class="j-quote">"When a decision pulls you two ways, what's your first move?"</p>
+          <p class="j-note"><b>TESTS</b>Decision strategy under pull. The only scene with an animated whisper layer over the painting — the temptation made literal in the page.</p>
+        </div>
+      </div>
+    </article>
+
+    <article class="j-node">
+      <div class="j-tag">
+        <div class="j-step">Scene 05</div>
+        <div class="j-id">05</div>
+      </div>
+      <div class="j-card">
+        <div class="j-thumb">
+          <img src="Athena_appearing_to_Odysseus_to_reveal_the_Island_of_Ithaca_by_Giuseppe_Bottani.jpg" alt="">
+        </div>
+        <div class="j-body">
+          <div class="j-name"><em>Athena Appears</em></div>
+          <div class="j-meta">Accent · gold</div>
+          <p class="j-quote">"What kind of guide actually helps you right now?"</p>
+          <p class="j-note"><b>TESTS</b>Preferred guidance modality. Maps directly onto the four appointment types OCLD offers.</p>
+        </div>
+      </div>
+    </article>
+
+    <article class="j-node">
+      <div class="j-tag">
+        <div class="j-step">Scene 06</div>
+        <div class="j-id">06</div>
+      </div>
+      <div class="j-card">
+        <div class="j-thumb">
+          <img src="Ditlev_Blunck_-Ulysses.jpg" alt="">
+        </div>
+        <div class="j-body">
+          <div class="j-name"><em>The Long Look</em></div>
+          <div class="j-meta">Accent · olive · Tiebreaker scene</div>
+          <p class="j-quote">"What question do you ask yourself looking back?"</p>
+          <p class="j-note"><b>TESTS</b>Reflective default. Functions as the tiebreaker because the decision moment carries more diagnostic weight than rehearsed answers.</p>
+        </div>
+      </div>
+    </article>
+
+    <!-- DELIVERY PHASE -->
+    <div class="j-phase">
+      <span></span>
+      <div class="j-phase-bar"><span class="j-phase-label">Delivery</span></div>
+    </div>
+
+    <article class="j-node">
+      <div class="j-tag">
+        <div class="j-step">Screen 09</div>
+        <div class="j-id">→</div>
+      </div>
+      <div class="j-card">
+        <div class="j-thumb">
+          <img src="Wilson-My-Recking-Penelope-from-the-Odyssey-new.webp" alt="">
+        </div>
+        <div class="j-body">
+          <div class="j-name">Result</div>
+          <div class="j-meta">Layer 1 + Layer 2 + matched CTA</div>
+          <p class="j-quote">"You're the Penelope. Your field comes first. That's not avoidance, that's the answer."</p>
+          <p class="j-note"><b>UX MOVE</b>The reveal makes the four characters memorable in retrospect, not as homework. The CTA card matches the function: each persona books a different first appointment.</p>
+        </div>
+      </div>
+    </article>
+
+  </div>
+</section>
+
+<!-- ═══════════════ 04 KEY DECISIONS ═══════════════ -->
+<section class="section">
+  <div class="section-header">
+    <span class="section-num">04</span>
+    <h2 class="section-title">Six <em>UX</em> decisions that did most of the work.</h2>
+  </div>
+
+  <div class="decisions">
+    <article class="dec">
+      <div class="dec-num">D · 01</div>
+      <h3 class="dec-title">Paintings <em>lead</em>, text follows.</h3>
+      <p class="dec-body">
+        Graduate students are scanning, not reading. Each scene opens with a 16:9 cinematic plate from a classical Odyssey painting. The setup is one or two short sentences underneath. The painting carries the emotional context the words would otherwise have to spell out.
+      </p>
+      <span class="dec-tag">Cognitive offload</span>
+    </article>
+
+    <article class="dec">
+      <div class="dec-num">D · 02</div>
+      <h3 class="dec-title">Names withheld until the <em>reveal</em>.</h3>
+      <p class="dec-body">
+        An earlier version showed all four characters upfront. Cut. Forcing students to learn four mythological names before answering anything broke flow and gave away the diagnostic. Now the names appear only on the result screen — the reveal becomes the payoff.
+      </p>
+      <span class="dec-tag">Engagement</span>
+    </article>
+
+    <article class="dec">
+      <div class="dec-num">D · 03</div>
+      <h3 class="dec-title">One scene, <em>one</em> color.</h3>
+      <p class="dec-body">
+        Each scene runs on its own accent: sea teal, umber, wine, blood, gold, olive. The accent threads through HP bar fill, selected option border, and pulse glow on the continue button. By Scene 4 the student feels they're in a different room, not on the same page with new text.
+      </p>
+      <span class="dec-tag">Atmosphere</span>
+    </article>
+
+    <article class="dec">
+      <div class="dec-num">D · 04</div>
+      <h3 class="dec-title">Page-by-page, not <em>scrolling</em> doc.</h3>
+      <p class="dec-body">
+        Each scene fits roughly one viewport. Slide-in transition between scenes. Touch swipe enabled on mobile. The student moves the way a reader turns a page — small commitments, low overhead, no sense of "how much more is left."
+      </p>
+      <span class="dec-tag">Flow</span>
+    </article>
+
+    <article class="dec">
+      <div class="dec-num">D · 05</div>
+      <h3 class="dec-title">Tie scoring made <em>visible</em>.</h3>
+      <p class="dec-body">
+        First version silently declared a winner when answers tied. Felt arbitrary. Now ties surface a small note: "Your answers split across two patterns. The last scene weighed most, because that one tests how you actually decide in the moment." The math becomes part of the explanation, not a black box.
+      </p>
+      <span class="dec-tag">Trust</span>
+    </article>
+
+    <article class="dec">
+      <div class="dec-num">D · 06</div>
+      <h3 class="dec-title">Result CTAs are <em>matched</em>, not generic.</h3>
+      <p class="dec-body">
+        The four result pages don't link to the same booking page with different copy. They route to four different first-appointment types: Career Design Conversation (Penelope), Overview Session (Tiresias), Confidential 1:1 (Calypso), Strategy Session (Odysseus). The function-matched message reaches the function-matched service.
+      </p>
+      <span class="dec-tag">Conversion</span>
+    </article>
+  </div>
+</section>
+
+<!-- ═══════════════ 05 ATMOSPHERE ═══════════════ -->
+<section class="section">
+  <div class="section-header">
+    <span class="section-num">05</span>
+    <h2 class="section-title">The <em>sensory</em> layer.</h2>
+  </div>
+
+  <p class="body-prose" style="margin-bottom:1.5rem;">
+    Three small sensory choices do quiet work behind the visible UI. Each one earns its place by either deepening immersion or making the page feel hand-set rather than auto-generated.
+  </p>
+
+  <div class="atmo">
+    <div class="atmo-card">
+      <div class="atmo-icon">~</div>
+      <h3 class="atmo-name">Wind on every painting</h3>
+      <p class="atmo-desc">A slow horizontal shimmer drifts across each hero image on a 13-second cycle. Screen blend mode means it lifts highlights without changing the painting. Felt before noticed.</p>
+    </div>
+    <div class="atmo-card">
+      <div class="atmo-icon">"</div>
+      <h3 class="atmo-name">Sirens whisper, Scene 4 only</h3>
+      <p class="atmo-desc">Three lines of italic text fade in and out over the Sirens painting in sequence. <em>"...come closer..."</em> · <em>"...just one song..."</em> · <em>"...we know what you want..."</em> The temptation in the scene becomes literal in the page.</p>
+    </div>
+    <div class="atmo-card">
+      <div class="atmo-icon">·</div>
+      <h3 class="atmo-name">Paper grain on cards</h3>
+      <p class="atmo-desc">SVG noise is multiplied into each option card and the body background. A radial warmth sits behind everything. The whole page reads as something you could print, not something served fresh from a database.</p>
+    </div>
+  </div>
+
+  <h3 style="font-family:var(--serif); font-weight:600; font-size:1.3rem; margin: 2rem 0 .5rem;">Eleven paintings, curated to the scene.</h3>
+  <p class="body-prose" style="margin-bottom:1rem;">
+    Every painting was chosen for its specific emotional load and historical placement in the Odyssey. Hover for attribution.
+  </p>
+
+  <div class="paintings">
+    <div class="painting-tile"><img src="turnerulyssespolyphemus.jpg" alt=""><div class="painting-cap">Turner · Polyphemus · 1829</div></div>
+    <div class="painting-tile"><img src="Procession-of-the-Trojan-Horse-canvas-Troy-1760.webp" alt=""><div class="painting-cap">Tiepolo · Trojan Horse · c.1760</div></div>
+    <div class="painting-tile"><img src="Odysseus_and_Calypso.jpg" alt=""><div class="painting-cap">Böcklin · Calypso · 1883</div></div>
+    <div class="painting-tile"><img src="Circe_Offering_the_Cup_to_Odysseus_(2457_x_4023px_ed.).jpg" alt=""><div class="painting-cap">Waterhouse · Circe's Cup · 1891</div></div>
+    <div class="painting-tile"><img src="Ulysses_And_The_Sirens_by_L%C3%A9on_Belly.jpg" alt=""><div class="painting-cap">Belly · Sirens · 1867</div></div>
+    <div class="painting-tile"><img src="waterhouse-ulysses-sirens-credit-public-domain.jpg" alt=""><div class="painting-cap">Waterhouse · Sirens (alt)</div></div>
+    <div class="painting-tile"><img src="Athena_appearing_to_Odysseus_to_reveal_the_Island_of_Ithaca_by_Giuseppe_Bottani.jpg" alt=""><div class="painting-cap">Bottani · Athena · c.1775</div></div>
+    <div class="painting-tile"><img src="Ditlev_Blunck_-Ulysses.jpg" alt=""><div class="painting-cap">Blunck · Ulysses · 19th c.</div></div>
+    <div class="painting-tile"><img src="Wilson-My-Recking-Penelope-from-the-Odyssey-new.webp" alt=""><div class="painting-cap">Wilson · Penelope · c.1768</div></div>
+    <div class="painting-tile"><img src="tiresias-odysseus-1a.jpg" alt=""><div class="painting-cap">Tiresias · after Füssli</div></div>
+    <div class="painting-tile"><img src="Calypso_receiving_Telemachus_and_Mentor_in_the_Grotto_detail.webp" alt=""><div class="painting-cap">Calypso & Telemachus · c.1810</div></div>
+    <div class="painting-tile" style="background:var(--ink); display:flex; align-items:center; justify-content:center;"><span style="font-family:var(--mono); font-size:9px; letter-spacing:.18em; color:var(--vellum);">11</span></div>
+  </div>
+</section>
+
+<!-- ═══════════════ 06 BUILD ═══════════════ -->
+<section class="section">
+  <div class="section-header">
+    <span class="section-num">06</span>
+    <h2 class="section-title">Built to <em>scale</em> to zero staff.</h2>
+  </div>
+
+  <div class="stack">
+    <div class="body-prose">
+      <p>
+        OCLD has three full-time staff for graduate programs. Any creative activation that requires ongoing maintenance fails before it ships. The quiz was built as a single self-contained HTML file, no framework, no build step, no backend.
+      </p>
+      <p>
+        It deploys to GitHub Pages or any static host in under a minute, embeds inside Canvas as an iframe, opens from a QR code on a faculty-distributed folder, and passes UTM source parameters back to OCLD's existing Handshake intake so each entry channel can be measured independently.
+      </p>
+      <p>
+        Once the shell is built, the marginal cost per student is zero. The campaign scales to every incoming master's and PhD cohort across 14 colleges with no additional headcount.
+      </p>
+    </div>
+
+    <ul class="stack-list">
+      <li><span class="k">Markup</span><span class="v">HTML5, no framework</span></li>
+      <li><span class="k">Style</span><span class="v">Vanilla CSS · CSS variables · no preprocessor</span></li>
+      <li><span class="k">Logic</span><span class="v">Vanilla JS · no dependencies</span></li>
+      <li><span class="k">Type</span><span class="v">Cormorant Garamond · IBM Plex Sans · IBM Plex Mono</span></li>
+      <li><span class="k">Images</span><span class="v">Public-domain Odyssey paintings · WebP / JPG</span></li>
+      <li><span class="k">Hosting</span><span class="v">Static · <code>GitHub Pages</code> ready</span></li>
+      <li><span class="k">Analytics</span><span class="v">UTM <code>?src=folder|canvas|ig</code> back to Handshake</span></li>
+      <li><span class="k">A11y</span><span class="v">Touch swipe · keyboard nav · <code>prefers-reduced-motion</code></span></li>
+    </ul>
+  </div>
+</section>
+
+<!-- ═══════════════ CTA ═══════════════ -->
+<div class="cta-block">
+  <p class="cta-eyebrow">Try the live instrument</p>
+  <h3 class="cta-title">Find which character moves <em>the way you do</em>.</h3>
+  <a class="cta-btn" href="index.html">
+    Take the quiz
+    <svg viewBox="0 0 14 14" fill="none"><path d="M1 7h12M8 2l5 5-5 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </a>
+</div>
+
+<!-- ═══════════════ COLOPHON ═══════════════ -->
+<p class="colophon">
+  <b>Odyssey's Lab</b> · Bella Kang, Haijing Liu, Shengying Su · ADV 382J Spring 2026 · Stan Richards School of Advertising and Public Relations · Moody College of Communication · The University of Texas at Austin · Theory: Functional Attitude Theory (Katz, 1960)
+</p>
+
+</div>
+</body>
+</html>
